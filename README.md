@@ -29,7 +29,7 @@ In format `dataDict[itemName] = {[Avg. Day Price, Recent Prices, Lowest Price], 
 <img width=600 src="https://i.imgur.com/qLK11tl.png?1">
 </p>
 
-Log data to mySQL/mariaDB and manipulate data from there.
+Log data to InfluxDB and manipulate data from there.
 
 # Limitations
 ## Optimized for 1440p, forced 21:9 AND 100% Hud Scaling ONLY

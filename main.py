@@ -1,10 +1,7 @@
-import scrape
 import navigateAH
 
-# scrapes the full page
+def run():
+  navigateAH.getEngravingScreenshot(green=0, blue=0, purple=1)
+  
 
-# print(scrape.transcribeCatalog())
-
-# scrape.transcribeCatalog()
-
-navigateAH.getEngravingScreenshot()
+run()

@@ -25,8 +25,9 @@ In format `dataDict[itemName] = {[Avg. Day Price, Recent Prices, Lowest Price], 
 <img width=600 src="https://i.imgur.com/qLK11tl.png?1">
 </p>
 
+Log data to mySQL/mariaDB and manipulate data from there.
 
-
-
-
+# Limitations
+## Optimized for 1440p ONLY
+* All values are hardcoded to 1440p due to how it scrapes the data. Other resolutions could be supported by scaling it linearly but untested.
 

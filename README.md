@@ -10,9 +10,13 @@ Thus, birthed the idea of an auction house scraper for viewing item price histor
 * Create charts/graphs of multiple items to create meaningful data ()
 
 # How does it work?
-It takes screenshots* of multiple areas of interests (e.g. Engraving Recipes, Enhancement Materials etc..) and extracts only the relevant information to return a dictionary of lists corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price`. 
+It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enhancement Materials etc..) and extracts only the relevant information to return a dictionary of lists corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price`. 
 
-*WIP: currently it only grabs information from a single screenshot - not multiple.
+# Usage
+1. Load into Lost Ark without any menus open
+2. Modify function in `main.py` as needed
+3. Run `main.py` 
+4. Let it bake for a little bit
 
 ## Example snippet
 <p align="center">

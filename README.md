@@ -16,11 +16,11 @@ It takes screenshots* of multiple areas of interests (e.g. Engraving Recipes, En
 
 ## Example snippet
 <p align="center">
-<img width=1000 src="https://i.imgur.com/fquXVdY.png">
+<img width=800 src="https://i.imgur.com/fquXVdY.png">
 </p>
 
-## Returns key information in format `dataDict[itemName] = {[Avg. Day Price, Recent Prices, Lowest Price], ...}`
-
+## Returns relevant information 
+In format `dataDict[itemName] = {[Avg. Day Price, Recent Prices, Lowest Price], ...}`.
 <p align="center">
 <img width=600 src="https://i.imgur.com/qLK11tl.png?1">
 </p>

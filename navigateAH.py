@@ -6,6 +6,7 @@ from pyautogui import click
 from time import sleep
 from configuration import debugMode, screenshotPath, cSpeed
 import shutil
+import json
 
 pyautogui.FAILSAFE = True # move cursor to upper left to abort
 
@@ -197,7 +198,7 @@ def getEngravingData(green=1, blue=0, purple=0):
     click()
     pyautogui.moveRel(0,40,cSpeed)
     click()
-    sleep(0.5) # need delay while it loads
+    sleep(1) # need delay while it loads
     category = 'engravings'
     # get all green books
     if(green == 1):
@@ -217,11 +218,16 @@ def getEngravingData(green=1, blue=0, purple=0):
       description = "purpleEngravings"
       allEngravingData = allEngravingData | batchProcessAllPages(description, category)
     print('returned Data: \n', allEngravingData)
+    
+    with open('./dataDict.json', 'w') as dataDictFile:
+      dataDictFile.write(json.dumps(allEngravingData))
+      dataDictFile.close()
     pyautogui.press('esc')
     return
+    
   except:
     pyautogui.press('esc')
-    return
+    return  
 
 def getGoldToCrystalsRate():
   """ returns a float of the rate from gold -> crystals """

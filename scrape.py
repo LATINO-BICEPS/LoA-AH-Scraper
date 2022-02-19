@@ -111,7 +111,7 @@ def transcribeCatalog(img, category='default'):
     if(debugMode):
         cv2.imshow('catalog', catalog)
         cv2.waitKey(200)
-        rows = 10
+        rows = 2
     for i in range(rows): # all is 10
         # fetch product name
         productName, endY, endX = getProduct(startY,startX,catalog)

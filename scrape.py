@@ -70,8 +70,8 @@ def getPrices(startY, startX, catalog):
         priceList.append(price)
         if(debugMode):
             cv2.imshow('priceImage', priceImage)
-            cv2.imshow('priceNoGoldImage', priceNoGoldImage)
-            cv2.imshow('priceImageProcessed', priceImageProcessed)
+            # cv2.imshow('priceNoGoldImage', priceNoGoldImage)
+            # cv2.imshow('priceImageProcessed', priceImageProcessed)
             cv2.waitKey(200)
     return priceList
 
@@ -111,11 +111,11 @@ def transcribeCatalog(img, category='default'):
     if(debugMode):
         cv2.imshow('catalog', catalog)
         cv2.waitKey(200)
-        rows = 2
+        rows = 10
     for i in range(rows): # all is 10
         # fetch product name
         productName, endY, endX = getProduct(startY,startX,catalog)
-        if(category == 'Engravings'):
+        if(category == 'engravings'):
             productName = productName[:-26] # exclusive to engravings. removes [Untradeable .. ]
         if(productName == ''):
             print("There are no more items to be transcribed.")

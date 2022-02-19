@@ -5,6 +5,16 @@ I consider myself a data-driven person who thrives on efficiency. Making spreads
 
 Thus, birthed the idea of an auction house scraper for viewing item price history. I was not too satisfied with the limited options the in-game AH offers for this idea _for obvious reasons_. As such, I decided to make my own sloppy implementation of an AH API.
 
+# Usage
+
+<p align="center"><img width=900 src="https://i.imgur.com/y5VhwsN.gif"></p>
+
+1. Load into Lost Ark without any menus open
+2. Modify function in `main.py` as needed
+3. Run `main.py` 
+4. Let it process the images for a few minutes
+5. Log data to InfluxDB and manipulate data from there.
+
 # Features
 * Track the trend of an item to make a more informed decision on AH
 * Create charts/graphs of multiple items to create meaningful data ()
@@ -19,15 +29,6 @@ It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enh
 * pyautogui
 * pytesseract
 
-# Usage
-
-<p align="center"><img width=900 src="https://i.imgur.com/y5VhwsN.gif"></p>
-
-1. Load into Lost Ark without any menus open
-2. Modify function in `main.py` as needed
-3. Run `main.py` 
-4. Let it process the images for a few minutes
-5. Log data to InfluxDB and manipulate data from there.
 
 # Limitations
 ## Optimized for 1440p, forced 21:9 AND 100% Hud Scaling ONLY

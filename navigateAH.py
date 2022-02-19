@@ -5,11 +5,9 @@ import scrape
 import os
 from pyautogui import click
 from time import sleep
-from configuration import debugMode
+from configuration import debugMode, screenshotPath, cSpeed
 import shutil
 
-screenshotPath = './img' # where to store the temp screenshots
-cSpeed = 0.2
 pyautogui.FAILSAFE = True # move cursor to upper left to abort
 
 def resetCursor(seconds=3):
@@ -173,7 +171,7 @@ def batchProcessAllPages(description, category, batch=True):
     print(item, itemDict[item])
   print('\n\n\n')
 
-def getEngravingScreenshot(green=1, blue=0, purple=0):
+def getEngravingData(green=1, blue=0, purple=0):
   """ take multiple screenshots of engravings tab and save them in format
       [DD-MM-YYYY] XXXXXXX where XXXXX is the description of screenshot by default, 
       it will only take screenshots of ALL green book pages """
@@ -204,30 +202,53 @@ def getEngravingScreenshot(green=1, blue=0, purple=0):
       description = "purpleEngravings"
       batchProcessAllPages(description, category)
 
-    openCloseAH()
-    resetCursor(1)
+    pyautogui.press('esc')
+    return
   except:
-    openCloseAH()
-    resetCursor(1) # remove when finished debugging
+    pyautogui.press('esc')
+    return
 
 def getGoldToCrystalsRate():
+  """ returns a float of the rate from gold -> crystals """
   openCloseStore()
   sleep(0.5)
   pyautogui.moveTo(2266,1210,cSpeed)
   click()
   pyautogui.moveTo(1566,785,cSpeed)
   click()
-  # 1650 950 purchase cost
   description = 'goldToCrystal'
   category = 'store'
-  screenshotPath = screenshot(description, category, 1)
+  curExchangeImgPath = screenshot(description, category, '')
+
+  print('-----------------------')
+  print('Processing Images Now')
+  print('-----------------------')
+  curExchangeIncompletePath = '{0}/{1}/incomplete'.format(screenshotPath, category)
+  curExchangeCompletePath = '{0}/{1}/complete'.format(screenshotPath, category)
+  print('Screenshot temp. directory: {0}'.format(curExchangeIncompletePath))
+  print('Reading {0} now'.format(curExchangeImgPath))
+  curExchange = scrape.cv2.imread(curExchangeImgPath)[950:1000, 1650:1740]
+  curExchangeProcessed = scrape.preprocessImage(curExchange)
+  if(debugMode):
+    scrape.cv2.imshow('Currency Exchange', curExchangeProcessed)
+    scrape.cv2.waitKey(200)
+  goldCost = scrape.imageToDigits(curExchangeProcessed)
+
+  # remove existing files first in `curExchangeCompletePath` to make room for the updated ones
+  for oldImage in os.listdir(curExchangeCompletePath):
+    os.remove('{0}/{1}'.format(curExchangeCompletePath, oldImage))
+  # transfer all files to completed DIR
+  for existingImage in os.listdir(curExchangeIncompletePath):
+    
+    shutil.move('{0}/{1}'.format(curExchangeIncompletePath, existingImage),
+               '{0}/{1}'.format(curExchangeCompletePath, existingImage))
+  print('It costs {0} gold per 95 crystals at {1} gold per crystal'.format(goldCost, goldCost/95))
+  pyautogui.press('esc')
+  return float(goldCost/95)
   
-
-## debug screenshots
-if(__name__ == '__main__'):
-  # description = "greenEngravings"
-  # category = 'Engravings'
-  # batchProcessAllPages(description, category)
-
-
-  getGoldToCrystalsRate()
+# ## debug screenshots
+# if(__name__ == '__main__'):
+#   # description = "greenEngravings"
+#   # category = 'Engravings'
+#   # batchProcessAllPages(description, category)
+#   getGoldToCrystalsRate()

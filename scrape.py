@@ -15,9 +15,7 @@ def imageToText(img):
             if(len(box) == 12):
                 text = box[11].strip('@®')
                 if(text != ''):
-                    if(debugMode):
-                        # print("Appending Product Name:", text) #uncomment for debugging
-                        textList.append(text)
+                    textList.append(text)
     text = ' '.join(textList)
     ## Alternate method
     # text = pytesseract.image_to_string(img)
@@ -38,8 +36,7 @@ def imageToDigits(img):
             if(len(box) == 12):
                 text = box[11]
                 if(text != ''):
-                    if(debugMode):
-                        print("Appending Product Price:", text) 
+                    print("Appending Product Price:", text) 
                     textList.append(text)
     text = ' '.join(textList)
     return float(text)
@@ -114,7 +111,7 @@ def transcribeCatalog(img, category='default'):
     if(debugMode):
         cv2.imshow('catalog', catalog)
         cv2.waitKey(200)
-        rows = 5
+        rows = 2
     for i in range(rows): # all is 10
         # fetch product name
         productName, endY, endX = getProduct(startY,startX,catalog)
@@ -126,8 +123,7 @@ def transcribeCatalog(img, category='default'):
         # fetch prices
         avgPrice, recentPrice, lowestPrice = getPrices(endY, endX, catalog)
         dataDict[productName] = [avgPrice, recentPrice, lowestPrice]
-        if(debugMode):
-            print(productName, dataDict[productName])
+        print(productName, dataDict[productName])
         # iterate one row after ~57px below
         startY += 57
     return dataDict

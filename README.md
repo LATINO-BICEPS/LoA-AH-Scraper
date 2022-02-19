@@ -12,6 +12,12 @@ Thus, birthed the idea of an auction house scraper for viewing item price histor
 # How does it work?
 It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enhancement Materials etc..) and extracts only the relevant information to return a dictionary of lists corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price`. 
 
+# Requirements
+* >= Python 3.9 (Primarily for merge operator)
+* openCV-Python
+* pyautogui
+* pytesseract
+
 # Usage
 1. Load into Lost Ark without any menus open
 2. Modify function in `main.py` as needed

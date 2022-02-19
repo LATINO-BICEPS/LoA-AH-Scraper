@@ -1,7 +1,8 @@
 import cv2
-from cv2 import imshow
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+from configuration import debugMode, pyTesseractPath
+
+pytesseract.pytesseract.tesseract_cmd = pyTesseractPath
 
 # excerpt from https://www.youtube.com/watch?v=6DjFscX4I_c
 def imageToText(img):
@@ -14,8 +15,9 @@ def imageToText(img):
             if(len(box) == 12):
                 text = box[11].strip('@®')
                 if(text != ''):
-                    print("Appending Product Name:", text) #uncomment for debugging
-                    textList.append(text)
+                    if(debugMode):
+                        # print("Appending Product Name:", text) #uncomment for debugging
+                        textList.append(text)
     text = ' '.join(textList)
     ## Alternate method
     # text = pytesseract.image_to_string(img)
@@ -36,7 +38,8 @@ def imageToDigits(img):
             if(len(box) == 12):
                 text = box[11]
                 if(text != ''):
-                    print("Appending Product Price:", text) # uncomment for debugging
+                    if(debugMode):
+                        print("Appending Product Price:", text) 
                     textList.append(text)
     text = ' '.join(textList)
     return float(text)
@@ -46,8 +49,9 @@ def getProduct(startY, startX, catalog):
     # returns [productName, endY, endX]
     height, productWidth = 60,300
     productName = catalog[startY:startY+height,startX:startX+productWidth]
-    # cv2.imshow('cropped', productName)
-    # cv2.waitKey(0)
+    if(debugMode):
+        cv2.imshow('Product Name', productName)
+        cv2.waitKey(200)
     productName = imageToText(productName)
     productList = [productName, startY, startX+productWidth]
     return productList
@@ -65,13 +69,13 @@ def getPrices(startY, startX, catalog):
         # removes the gold symbol to avoid tesseract misinterpreting it as a 0 (e.g 3 O can be seen as 30)
         priceNoGoldImage = priceImage[0:y,0:x-rightMargin]
         priceImageProcessed = preprocessImage(priceNoGoldImage, 500)
-        price = imageToDigits(priceImageProcessed)
+        price = imageToDigits(priceImageProcessed) 
         priceList.append(price)
-        # # uncomment for debugging
-        # cv2.imshow('priceImage', priceImage)
-        # cv2.imshow('priceNoGoldImage', priceNoGoldImage)
-        # cv2.imshow('priceImageProcessed', priceImageProcessed)
-        # cv2.waitKey(600)
+        if(debugMode):
+            cv2.imshow('priceImage', priceImage)
+            cv2.imshow('priceNoGoldImage', priceNoGoldImage)
+            cv2.imshow('priceImageProcessed', priceImageProcessed)
+            cv2.waitKey(200)
     return priceList
 
 def resize(img, scale_percent=300):
@@ -98,34 +102,32 @@ def preprocessImage(img, scale=300):
     invertedColours = cv2.bitwise_not(blackAndWhite)
     return invertedColours
 
-def transcribeCatalog(img):
+def transcribeCatalog(img, category='default'):
     """ transcribes the fed full sized image, crops it to fit then returns dictionary
-    corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price`. 
+    corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price` of all items on the page. 
     optimized for 1440p, used shareX alongside trial and error to find the points
     pixel positions are hardcoded but I don't bloody know how to do it otherwise """
-
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
     catalog = img[480:1050,930:1720] # crops fullscreen screenshot to just shop elements
-    # catalog = preprocessImage(img) # try commenting out if have issues and uncomment getprices()
     dataDict = {}
-    startY, startX = 0,0
-    cv2.imshow('catalog', catalog)
-    cv2.waitKey(100)
-    for i in range(4): # all is 10
+    startY, startX, rows = 0,0,10
+    if(debugMode):
+        cv2.imshow('catalog', catalog)
+        cv2.waitKey(200)
+        rows = 5
+    for i in range(rows): # all is 10
         # fetch product name
         productName, endY, endX = getProduct(startY,startX,catalog)
+        if(category == 'Engravings'):
+            productName = productName[:-26] # exclusive to engravings. removes [Untradeable .. ]
         if(productName == ''):
-            print("NO MORE ITEMS")
+            print("There are no more items to be transcribed.")
             break
-        # productName = productName[:-26] # this slicing is only for engravings
         # fetch prices
         avgPrice, recentPrice, lowestPrice = getPrices(endY, endX, catalog)
         dataDict[productName] = [avgPrice, recentPrice, lowestPrice]
-        print(productName, dataDict[productName])
+        if(debugMode):
+            print(productName, dataDict[productName])
         # iterate one row after ~57px below
         startY += 57
-    # # uncomment to debug
-    # for item in dataDict:
-    #     print(item, dataDict[item])
-    cv2.destroyWindow('catalog')
     return dataDict

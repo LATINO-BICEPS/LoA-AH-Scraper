@@ -8,8 +8,6 @@ from time import sleep
 from configuration import debugMode
 import shutil
 
-
-
 screenshotPath = './img' # where to store the temp screenshots
 cSpeed = 0.2
 pyautogui.FAILSAFE = True # move cursor to upper left to abort
@@ -21,6 +19,11 @@ def resetCursor(seconds=3):
   pyautogui.moveTo(x,y,0)
   return
   
+def openCloseStore():
+  pyautogui.moveTo(1200,570,cSpeed)
+  click()
+  pyautogui.press('F4')
+
 def openCloseAH():
   pyautogui.moveTo(1200,570,cSpeed)
   click()
@@ -78,7 +81,7 @@ def screenshot(desc, category, page):
     os.makedirs(pathIncomplete)
     print('{0} Folder Created.'.format(pathIncomplete))
   if not isCompleteExist:
-    os.makedirs(isCompleteExist)
+    os.makedirs(pathComplete)
     print('{0} Folder Created.'.format(isCompleteExist))
 
   timestamp = str(datetime.datetime.now())[:-7].replace(":",'-').replace(" ",'_')
@@ -170,12 +173,6 @@ def batchProcessAllPages(description, category, batch=True):
     print(item, itemDict[item])
   print('\n\n\n')
 
-  
-
-
-
-
-
 def getEngravingScreenshot(green=1, blue=0, purple=0):
   """ take multiple screenshots of engravings tab and save them in format
       [DD-MM-YYYY] XXXXXXX where XXXXX is the description of screenshot by default, 
@@ -188,39 +185,49 @@ def getEngravingScreenshot(green=1, blue=0, purple=0):
     pyautogui.moveRel(0,40,cSpeed)
     click()
     sleep(0.5) # need delay while it loads
-
+    category = 'engravings'
     # get all green books
     if(green == 1):
       selectRarity("green")
       description = "greenEngravings"
-      category = 'Engravings'
       batchProcessAllPages(description, category)
 
     # get all blue books
     if(blue == 1):
       selectRarity("blue")
       description = "blueEngravings"
-      category = 'Engravings'
       batchProcessAllPages(description, category)
 
     # get all purple books
     if(purple == 1):
       selectRarity("purple")
       description = "purpleEngravings"
-      category = 'Engravings'
       batchProcessAllPages(description, category)
+
     openCloseAH()
     resetCursor(1)
-
   except:
     openCloseAH()
     resetCursor(1) # remove when finished debugging
 
 def getGoldToCrystalsRate():
-  pass
+  openCloseStore()
+  sleep(0.5)
+  pyautogui.moveTo(2266,1210,cSpeed)
+  click()
+  pyautogui.moveTo(1566,785,cSpeed)
+  click()
+  # 1650 950 purchase cost
+  description = 'goldToCrystal'
+  category = 'store'
+  screenshotPath = screenshot(description, category, 1)
+  
 
 ## debug screenshots
-# if(__name__ == '__main__'):
-#   description = "greenEngravings"
-#   category = 'Engravings'
-#   batchProcessAllPages(description, category)
+if(__name__ == '__main__'):
+  # description = "greenEngravings"
+  # category = 'Engravings'
+  # batchProcessAllPages(description, category)
+
+
+  getGoldToCrystalsRate()

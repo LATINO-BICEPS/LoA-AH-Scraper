@@ -14,7 +14,7 @@ Thus, birthed the idea of an auction house scraper for viewing item price histor
 It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enhancement Materials etc..) and extracts only the relevant information to return a dictionary of lists corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price`. 
 
 # Requirements
-* >= Python 3.9 (Primarily for merge operator)
+* \>= Python 3.9 (Primarily for merge operator)
 * openCV-Python
 * pyautogui
 * pytesseract

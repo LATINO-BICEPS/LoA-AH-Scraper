@@ -6,7 +6,6 @@ I consider myself a data-driven person who thrives on efficiency. Making spreads
 Thus, birthed the idea of an auction house scraper for viewing item price history. I was not too satisfied with the limited options the in-game market offers for this idea _for obvious reasons_. As such, I decided to make my own sloppy implementation of market API.
 
 # Usage
-
 <p align="center"><img width=900 src="https://i.imgur.com/y5VhwsN.gif"></p>
 
 1. Load into Lost Ark without any menus open

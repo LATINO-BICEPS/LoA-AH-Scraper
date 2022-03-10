@@ -70,11 +70,11 @@ def openCloseStore():
   click()
   pyautogui.press('F4')
 
-def openCloseAH():
+def openCloseMarket():
   pyautogui.moveTo(1200,570,cSpeed)
   click()
   pyautogui.hotkey("altleft", "y")
-  sleep(1)
+  sleep(2)
 
 def selectTier(tier=1):
   """ give value [1,2,3] """
@@ -168,8 +168,19 @@ def batchProcessAllPages(description, category, batch=True):
     if(dryrun):
       print('This is a dryrun. No data will be saved. Change variable in `configuration.py`.')
     print('-----------------------')
+
     batchScreenshotIncompletePath = '{0}/{1}/incomplete'.format(screenshotPath, category)
     batchScreenshotCompletePath = '{0}/{1}/complete'.format(screenshotPath, category)
+    # check if folder exists
+    isIncompleteExist = os.path.exists(batchScreenshotIncompletePath)
+    isCompleteExist = os.path.exists(batchScreenshotCompletePath)
+    if not isIncompleteExist:
+      os.makedirs(batchScreenshotIncompletePath)
+      print('{0} Folder Created.'.format(batchScreenshotIncompletePath))
+    if not isCompleteExist:
+      os.makedirs(batchScreenshotCompletePath)
+      print('{0} Folder Created.'.format(batchScreenshotCompletePath))
+
     itemDict = {} # stores all the data in this one particular instance
     # first delete all temp files in incomplete and logs from complete
     for existingImage in os.listdir(batchScreenshotIncompletePath):
@@ -268,7 +279,7 @@ def getEngravingData(green=True, blue=False, purple=False, gold=False):
       [DD-MM-YYYY] XXXXXXX where XXXXX is the description of screenshot by default, 
       it will only take screenshots of ALL green book pages """
   try:
-    openCloseAH()
+    openCloseMarket()
     # select engraving recipe
     pyautogui.moveTo(768,580,cSpeed)
     click()
@@ -323,11 +334,19 @@ def getEngravingData(green=True, blue=False, purple=False, gold=False):
 def getGoldToCrystalsRate():
   """ returns a float of the rate from gold -> crystals """
   openCloseStore()
-  sleep(2)
-  pyautogui.moveTo(2266,1210,cSpeed)
-  click()
-  pyautogui.moveTo(1566,785,cSpeed)
-  click()
+  currencyExchangeBox = (2200,1197,151,30)
+  while True:
+    currencyExchangeBoxImg = scrape.tempScreenshot(currencyExchangeBox)
+    currencyExchangeBoxText = scrape.imageToText(currencyExchangeBoxImg)
+    if(currencyExchangeBoxText == 'Currency Exchange'):
+      pyautogui.moveTo(2200,1210,cSpeed)
+      sleep(1)
+      click()
+      sleep(1)
+      pyautogui.moveTo(1566,785,cSpeed)
+      click()
+      break
+    sleep(1)
   description = 'goldToCrystal'
   category = 'store'
   curExchangeImgPath = screenshot(description, category, '')
@@ -354,7 +373,9 @@ def getGoldToCrystalsRate():
     
     shutil.move('{0}/{1}'.format(curExchangeIncompletePath, existingImage),
                '{0}/{1}'.format(curExchangeCompletePath, existingImage))
+  print('-----------------------------------------------------------')
   print('It costs {0} gold per 95 crystals at {1} gold per crystal'.format(goldCost, goldCost/95))
+  print('-----------------------------------------------------------')
   if(not dryrun):
   # send to influxdb
     bucket = 'currencyExchange'
@@ -373,7 +394,7 @@ def getGoldToCrystalsRate():
 def getEnhancementMats(tier1=True, tier2=False, tier3=False):
   """ if tier1=True, get all data of tier 1 honing mats and send to influxdb"""
   try:
-    openCloseAH()
+    openCloseMarket()
     # select enhancement mats
     pyautogui.moveTo(690,622,cSpeed)
     click()
@@ -415,3 +436,6 @@ def getEnhancementMats(tier1=True, tier2=False, tier3=False):
     print(e)
     pyautogui.press('esc')
     return  
+
+if __name__ == '__main__':
+  getGoldToCrystalsRate()

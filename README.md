@@ -32,6 +32,7 @@ It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enh
 * pytesseract
 * influxdb-client
 
+Ensure `tesseract.exe` is in `C:\\Program Files\\Tesseract-OCR\\tesseract.exe`. Binaries are found [here](https://tesseract-ocr.github.io/tessdoc/Home.html#binaries).
 
 # Limitations
 ## Optimized for 1440p, forced 21:9 AND 100% Hud Scaling ONLY

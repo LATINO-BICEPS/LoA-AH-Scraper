@@ -1,12 +1,14 @@
 import cv2
 import pytesseract
+import pyautogui
+import os
 from configuration import debugMode, pyTesseractPath, debugTime
 
 pytesseract.pytesseract.tesseract_cmd = pyTesseractPath
 
 # excerpt from https://www.youtube.com/watch?v=6DjFscX4I_c
 def imageToText(img):
-    # returns item name from image
+    # returns item name from image, preprocess if needed
     boxes = pytesseract.image_to_data(img)
     num = []
     for count,box in enumerate(boxes.splitlines()):
@@ -157,3 +159,20 @@ def transcribeCatalog(img, category='default'):
         startY += 57
 
     return dataDict
+
+def tempScreenshot(roi=(0,0,2560,1440)):
+  """ returns the file path of the newly created temp screenshot
+      by default, takes screenshot of whole screen. specify Region Of Interest with syntax below
+      region = (left, top, width, height) """
+
+  screenshotPath = "./img/temp"
+  isPathExist = os.path.exists(screenshotPath)
+  if not isPathExist:
+    os.makedirs(screenshotPath)
+    print('{0} Folder Created.'.format(screenshotPath))
+  filename = 'temp'
+  screen = pyautogui.screenshot(region=roi) 
+  # Save as PNG - more accurate than JPG but almost 10x file size
+  screenshotImagePath = "{0}/{1}.png".format(screenshotPath, filename)
+  screen.save(screenshotImagePath)
+  return screenshotImagePath

@@ -15,18 +15,19 @@ Thus, birthed the idea of an auction house scraper for viewing item price histor
 4. Let it process the images for a few minutes
 5. Log data to InfluxDB and manipulate data from there.
 
-Some ideas include tracking the trend of an item to make a more informed decision on the market and/or create charts/graphs of multiple items to create meaningful data.
+Some ideas include tracking the trend of an item to make a more informed decision on the market and/or create charts/graphs of multiple items to create meaningful data. Scraping other region's market for how much things are supposed to cost is another idea.
 
 # Features
 * `getGoldToCrystalsRate()` returns the going rate of 1 blue crystal to gold
 * `getEngravingData()` returns `{'itemName': [avgPrice, recentPrice, lowestPrice], ...}`
 * Shortest path from A -> B *WIP
 
+
+
 # How does it work?
 It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enhancement Materials etc..) and extracts only the relevant information to return a dictionary of lists corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price`. 
 
 # Requirements
-* \>= Python 3.9 (Primarily for merge operator)
 * openCV-Python
 * pyautogui
 * pytesseract
@@ -36,4 +37,3 @@ It takes screenshots of multiple areas of interests (e.g. Engraving Recipes, Enh
 # Limitations
 ## Optimized for 1440p, forced 21:9 AND 100% Hud Scaling ONLY
 * All values are hardcoded to 1440p due to how it scrapes the data. Other resolutions could be supported by scaling it linearly but untested.
-

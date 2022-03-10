@@ -1,6 +1,6 @@
 import cv2
 import pytesseract
-from configuration import debugMode, pyTesseractPath
+from configuration import debugMode, pyTesseractPath, debugTime
 
 pytesseract.pytesseract.tesseract_cmd = pyTesseractPath
 
@@ -8,48 +8,72 @@ pytesseract.pytesseract.tesseract_cmd = pyTesseractPath
 def imageToText(img):
     # returns item name from image
     boxes = pytesseract.image_to_data(img)
-    textList = []
+    num = []
     for count,box in enumerate(boxes.splitlines()):
         if(count != 0):
             box = box.split()
             if(len(box) == 12):
                 text = box[11].strip('@®')
                 if(text != ''):
-                    textList.append(text)
-    text = ' '.join(textList)
+                    num.append(text)
+    text = ' '.join(num)
     ## Alternate method
     # text = pytesseract.image_to_string(img)
-    # print("Appending:", text)
+    # print("Name:", text)
     return text
 
 def imageToDigits(img):
-    """ returns a float
-    preprocess before passing through img """
-    # imageToText() did not capture the digits accurately at times so I use this
+    """ returns a float value of the scanned image
+    !!preprocess before passing through img !! """
+    # imageToText() did not capture the digits accurately at times so I used this
     # possibly could merge the 2 functions to make code shorter
     conf = r'--oem 3 --psm 7 outputbase digits'
     boxes = pytesseract.image_to_data(img, config=conf)
-    textList = []
+    numList = []
     for count,box in enumerate(boxes.splitlines()):
         if(count != 0):
             box = box.split()
             if(len(box) == 12):
-                text = box[11]
+                text = box[11] # the 12th column contains the text
                 if(text != ''):
-                    print("Appending Product Price:", text) 
-                    textList.append(text)
-    text = ' '.join(textList)
-    return float(text)
+                    if(text == '-'): # if it is an invalid value (i.e. "-"), set it to 0 dollars
+                        text = '0'
+                    # print("Appending Product Price:", text)
+                    numList.append(text)
+    # for some damn reason it does not detect some numbers like 7.1 Gold for Green grudge engraving 
+    if(len(numList) == 0): 
+        numList.append('0')
+    num = numList[0]
+    # occasionally there will be inaccuracies
+    # i.e. 1050 will be misinterpreted as 1.050
+    # check from right to left for every 3 digits if there's a period
+    # if there is, that is ONE thousand
+    # else, leave as it is
+    if(len(num) >= 5):
+        if(num[-4:-3] == '.'):
+            num = num[:-4] + num[-3:]
+    return float(num)
 
 def getProduct(startY, startX, catalog):
-    """ can preprocess before passing through catalog if desire accuracy"""
+    """ returns the product name of a listing """
     # returns [productName, endY, endX]
     height, productWidth = 60,300
     productName = catalog[startY:startY+height,startX:startX+productWidth]
+
+    # modified threshold of preprocessImage() from 127 to 60 for the algo. to discern more clearly
+    # increases accuracy of product name
+    grayscale = cv2.cvtColor(productName, cv2.COLOR_RGB2GRAY)
+    resized = resize(grayscale)
+    blurred = cv2.GaussianBlur(resized, (5,5), 0)
+    (thresh, blackAndWhite) = cv2.threshold(blurred, 73, 255, cv2.THRESH_BINARY) # value of 80 is good for gold books
+    invertedColours = cv2.bitwise_not(blackAndWhite)
+
     if(debugMode):
         cv2.imshow('Product Name', productName)
-        cv2.waitKey(200)
-    productName = imageToText(productName)
+        cv2.imshow('Processed Product Name', invertedColours)
+        cv2.waitKey(debugTime)
+    productName = imageToText(invertedColours)
+    print('The product name is: {0}'.format(productName))
     productList = [productName, startY, startX+productWidth]
     return productList
 
@@ -72,7 +96,7 @@ def getPrices(startY, startX, catalog):
             cv2.imshow('priceImage', priceImage)
             # cv2.imshow('priceNoGoldImage', priceNoGoldImage)
             # cv2.imshow('priceImageProcessed', priceImageProcessed)
-            cv2.waitKey(200)
+            cv2.waitKey(debugTime)
     return priceList
 
 def resize(img, scale_percent=300):
@@ -104,26 +128,32 @@ def transcribeCatalog(img, category='default'):
     corresponding to the `Avg. Day Price`, `Recent Price` and `Lowest Price` of all items on the page. 
     optimized for 1440p, used shareX alongside trial and error to find the points
     pixel positions are hardcoded but I don't bloody know how to do it otherwise """
+
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
     catalog = img[480:1050,930:1720] # crops fullscreen screenshot to just shop elements
     dataDict = {}
     startY, startX, rows = 0,0,10
     if(debugMode):
         cv2.imshow('catalog', catalog)
-        cv2.waitKey(200)
-        rows = 2
-    for i in range(rows): # all is 10
+        cv2.waitKey(debugTime)
+    for i in range(rows):
         # fetch product name
         productName, endY, endX = getProduct(startY,startX,catalog)
+
+        # exclusive to engravings. removes [Untradeable .. ] category
         if(category == 'engravings'):
-            productName = productName[:-26] # exclusive to engravings. removes [Untradeable .. ]
+            productName = productName[:-26]
+
+        # stops if there are no more entries
         if(productName == ''):
             print("There are no more items to be transcribed.")
             break
+
         # fetch prices
         avgPrice, recentPrice, lowestPrice = getPrices(endY, endX, catalog)
         dataDict[productName] = [avgPrice, recentPrice, lowestPrice]
         print(productName, dataDict[productName])
         # iterate one row after ~57px below
         startY += 57
+
     return dataDict

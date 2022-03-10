@@ -6,3 +6,6 @@ test.py
 checklist.txt
 *.pyc
 *.json
+updateSpread.py
+hpPotsTemp/
+__pycache__

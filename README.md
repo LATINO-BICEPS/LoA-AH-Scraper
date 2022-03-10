@@ -1,9 +1,9 @@
 # What is this?
-It's a script designed for the Lost Ark (NA/EU) release that monitors the in-game auction house to automatically transcribe the item names and return its corresponding prices. 
+This is a script designed for the Lost Ark (NA/EU) release that monitors the in-game market to automatically transcribe the item names and return its corresponding prices. 
 
 I consider myself a data-driven person who thrives on efficiency. Making spreadsheets on various aspects of games such as ability damage modifier % for the best DPS cycle, optimal routes to complete weeklies and dailies to save time, tracking in-game currency exchange rates to get the best bang for the buck.. you get the idea. 
 
-Thus, birthed the idea of an auction house scraper for viewing item price history. I was not too satisfied with the limited options the in-game AH offers for this idea _for obvious reasons_. As such, I decided to make my own sloppy implementation of an AH API.
+Thus, birthed the idea of an auction house scraper for viewing item price history. I was not too satisfied with the limited options the in-game market offers for this idea _for obvious reasons_. As such, I decided to make my own sloppy implementation of market API.
 
 # Usage
 

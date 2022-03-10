@@ -3,7 +3,7 @@ debugTime = 100 # set to 0 (ms) for the live window tiles to stay indefinitely u
 pyTesseractPath = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe" 
 screenshotPath = './img' # where to store the temp screenshots where it will process and delete it after
 cSpeed = 0.2 # cursor speed - 0 is instant
-dryrun = False # when set to True, it will not push to influxdb. debugMode must be set to False
+dryrun = True # when set to True, it will not push to influxdb. debugMode must be set to False
 
 # influxdb deets
 token = "bHhdq3fzMemWaVm_5Dzliir1Higy644sFbkpBhuYzVXe3LUZfZwaMZGuMmNZvu8cgOX85BCPvWFV2CeIwxsk8w=="

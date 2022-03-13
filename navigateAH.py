@@ -74,22 +74,26 @@ def openCloseMarket():
   pyautogui.moveTo(1200,570,cSpeed)
   click()
   pyautogui.hotkey("altleft", "y")
-  sleep(2)
+  sleep(5)
 
 def selectTier(tier=1):
   """ give value [1,2,3] """
   boxBelow = 40
   pyautogui.moveTo(913,422,cSpeed)
   click()
+  sleep(1)
   if(tier == 1):
     pyautogui.moveRel(0,boxBelow*1.5,cSpeed)
     click()
+    sleep(1)
   elif(tier == 2):
     pyautogui.moveRel(0,boxBelow*2,cSpeed)
     click()
+    sleep(1)
   elif(tier == 3):
     pyautogui.moveRel(0,boxBelow*3,cSpeed)
     click()
+    sleep(1)
 
 def selectRarity(rarity):
   """ green for uncommon
@@ -285,7 +289,7 @@ def getEngravingData(green=True, blue=False, purple=False, gold=False):
     click()
     pyautogui.moveRel(0,40,cSpeed)
     click()
-    sleep(1) # need delay while it loads
+    sleep(10) # need delay while it loads
     category = 'engravings'
     influxDBBucket = 'lostArkEngravingRecipes'
     # get all green books
@@ -340,9 +344,9 @@ def getGoldToCrystalsRate():
     currencyExchangeBoxText = scrape.imageToText(currencyExchangeBoxImg)
     if(currencyExchangeBoxText == 'Currency Exchange'):
       pyautogui.moveTo(2200,1210,cSpeed)
-      sleep(1)
+      sleep(2)
       click()
-      sleep(1)
+      sleep(2)
       pyautogui.moveTo(1566,785,cSpeed)
       click()
       break
@@ -398,9 +402,10 @@ def getEnhancementMats(tier1=True, tier2=False, tier3=False):
     # select enhancement mats
     pyautogui.moveTo(690,622,cSpeed)
     click()
+    sleep(1)
     pyautogui.moveRel(0,40,cSpeed)
     click()
-    sleep(1) # need delay while it loads
+    sleep(10) # need delay while it loads
     category = 'enhancementMats'
     influxDBBucket = 'lostArkEnhancementMats'
 

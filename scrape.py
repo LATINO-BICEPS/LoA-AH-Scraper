@@ -40,7 +40,7 @@ def imageToDigits(img):
                 if(text != ''):
                     if(text == '-'): # if it is an invalid value (i.e. "-"), set it to 0 dollars
                         text = '0'
-                    # print("Appending Product Price:", text)
+                    print("Appending Product Price:", text)
                     numList.append(text)
     # for some damn reason it does not detect some numbers like 7.1 Gold for Green grudge engraving 
     if(len(numList) == 0): 
@@ -67,7 +67,7 @@ def getProduct(startY, startX, catalog):
     grayscale = cv2.cvtColor(productName, cv2.COLOR_RGB2GRAY)
     resized = resize(grayscale)
     blurred = cv2.GaussianBlur(resized, (5,5), 0)
-    (thresh, blackAndWhite) = cv2.threshold(blurred, 73, 255, cv2.THRESH_BINARY) # value of 80 is good for gold books
+    (thresh, blackAndWhite) = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY) # value of 80 is good for gold books
     invertedColours = cv2.bitwise_not(blackAndWhite)
 
     if(debugMode):
@@ -91,13 +91,13 @@ def getPrices(startY, startX, catalog):
             y, x, _ = priceImage.shape 
         # removes the gold symbol to avoid tesseract misinterpreting it as a 0 (e.g 3 O can be seen as 30)
         priceNoGoldImage = priceImage[0:y,0:x-rightMargin]
-        priceImageProcessed = preprocessImage(priceNoGoldImage, 500)
+        priceImageProcessed = preprocessImage(priceNoGoldImage, 500, 50) # changed thresh to 60 for accuracy
         price = imageToDigits(priceImageProcessed) 
         priceList.append(price)
         if(debugMode):
             cv2.imshow('priceImage', priceImage)
             # cv2.imshow('priceNoGoldImage', priceNoGoldImage)
-            # cv2.imshow('priceImageProcessed', priceImageProcessed)
+            cv2.imshow('priceImageProcessed', priceImageProcessed)
             cv2.waitKey(debugTime)
     return priceList
 
@@ -109,7 +109,7 @@ def resize(img, scale_percent=300):
     resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
     return resized
 
-def preprocessImage(img, scale=300):
+def preprocessImage(img, scale=300, threshhold = 127):
     """ input RGB colour space """
     # makes results more accurate - inspired from https://stackoverflow.com/questions/58103337/how-to-ocr-image-with-tesseract
     # another resource to improve accuracy - https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html
@@ -121,7 +121,7 @@ def preprocessImage(img, scale=300):
     grayscale = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     resized = resize(grayscale, scale)
     blurred = cv2.GaussianBlur(resized, (5,5), 0)
-    (thresh, blackAndWhite) = cv2.threshold(blurred, 127, 255, cv2.THRESH_BINARY)
+    (thresh, blackAndWhite) = cv2.threshold(blurred, threshhold, 255, cv2.THRESH_BINARY)
     invertedColours = cv2.bitwise_not(blackAndWhite)
     return invertedColours
 
@@ -141,7 +141,13 @@ def transcribeCatalog(img, category='default'):
     for i in range(rows):
         # fetch product name
         productName, endY, endX = getProduct(startY,startX,catalog)
-
+        # fix misspellings
+        if(productName == 'Harmony Shard Pouct (L)'):
+            productName = 'Harmony Shard Pouch (L)'
+        if(productName == 'Harmony Shard Poucr (M)'):
+            productName = 'Harmony Shard Pouch (M)'
+        if(productName == 'Metallurgy: Basic Foldirg'):
+            productName = 'Metallurgy: Basic Folding'
         # exclusive to engravings. removes [Untradeable .. ] category
         if(category == 'engravings'):
             productName = productName[:-26]

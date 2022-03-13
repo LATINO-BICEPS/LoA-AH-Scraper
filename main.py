@@ -5,6 +5,31 @@ import os
 from time import sleep
 from configuration import cSpeed
 
+def shutdown():
+  print('Shutting PC Down now.')
+  os.system("shutdown /s /t 1")
+  return
+
+def isInMemoryChamber():
+  """ run this for first init. 
+      this function is not used but may be looked into in the  future"""
+  pyautogui.press('esc')
+  sleep(1)
+  pyautogui.moveTo(1092, 613,cSpeed)
+  pyautogui.click()
+  sleep(1)
+  pyautogui.moveTo(1219,792,cSpeed)
+  pyautogui.click()
+  sleep(1)
+  while True:
+    if(detectsCombatText):
+      print("User is in Memory Chamber.")
+      sleep(10)
+      pyautogui.rightClick(975, 489)
+      sleep(4)
+      return True
+    sleep(5)
+
 def detectsEnterButton():
   print('Detecting Enter Button..')
   enterButtonBox = (1236,1087,70,30)
@@ -60,7 +85,7 @@ def isNowInGame():
         break
       sleep(5)
     return True
-  # case 3
+  # case 3 (if char is already in-game but not in memory chamber)
   elif(detectsCombatText()):
     return True
   else:
@@ -90,14 +115,18 @@ def isNowInGame():
       if(detectsCombatText()):
         return True
       sleep(5)
-      
+
 def run():
   if(isNowInGame()):
     print('---------------------')
     print('Now fully in-game.')
     print('---------------------')
     # navigateAH.getEngravingData(green=1, blue=1, purple=1,gold=1)
-    # navigateAH.getEnhancementMats(tier1=True, tier2=True, tier3=True)
+    navigateAH.getEnhancementMats(tier1=True, tier2=True, tier3=True)
     navigateAH.getGoldToCrystalsRate()
+    print('Closing game in 10 seconds.')
+    sleep(10)
     pyautogui.hotkey("altleft", "f4") # quit game when finished
+    shutdown()
+
 run()
